@@ -19,8 +19,8 @@ from typing import List, Optional
 
 class PredictionRequest(BaseModel):
     """Request schema for prediction endpoint."""
-    # TODO: Define fields here
-    pass
+    user_id: str = Field(..., example="196")
+    movie_id: str = Field(..., example="242")
 
 
 # =============================================================================
@@ -34,8 +34,10 @@ class PredictionRequest(BaseModel):
 
 class PredictionResponse(BaseModel):
     """Response schema for prediction endpoint."""
-    # TODO: Define fields here
-    pass
+    user_id: str
+    movie_id: str
+    predicted_rating: float
+    model_version: str
 
 
 # =============================================================================
@@ -47,8 +49,8 @@ class PredictionResponse(BaseModel):
 
 class HealthResponse(BaseModel):
     """Response schema for health check endpoint."""
-    # TODO: Define fields here
-    pass
+    status: str
+    model_loaded: bool
 
 
 # =============================================================================

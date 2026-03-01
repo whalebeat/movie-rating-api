@@ -103,6 +103,26 @@ docker-compose up -d
 | POST | `/predict` | Get rating prediction |
 | GET | `/docs` | Swagger documentation |
 
+## Examples
+1. Single predict
+Invoke-RestMethod `
+  -Uri "http://localhost:8000/predict" `
+  -Method POST `
+  -ContentType "application/json" `
+  -Body '{ "user_id": "196", "movie_id": "242" }' 
+2. Batch predict
+Invoke-RestMethod `
+  -Uri "http://localhost:8000/predict/batch" `
+  -Method POST `
+  -ContentType "application/json" `
+  -Body '{
+    "predictions": [
+      { "user_id": "196", "movie_id": "242" },
+      { "user_id": "186", "movie_id": "302" },
+      { "user_id": "22",  "movie_id": "377" }
+    ]
+  }' | ConvertTo-Json -Depth 5
+
 ## TODO Tasks
 
 Complete the following files:

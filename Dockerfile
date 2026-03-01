@@ -14,7 +14,7 @@ FROM python:3.10-slim
 # TODO 1: Set working directory
 # -----------------------------------------------------------------------------
 # Hint: Use WORKDIR /app
-
+WORKDIR /app
 
 # -----------------------------------------------------------------------------
 # TODO 2: Copy and install dependencies
@@ -26,19 +26,27 @@ FROM python:3.10-slim
 # Hint:
 # COPY requirements.txt .
 # RUN pip install --no-cache-dir -r requirements.txt
-
+COPY requirements.txt .
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    gcc \
+    g++ \
+    make \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+RUN pip install --no-cache-dir -r requirements.txt
 
 # -----------------------------------------------------------------------------
 # TODO 3: Copy application code
 # -----------------------------------------------------------------------------
 # Hint: COPY . .
-
+COPY . .
 
 # -----------------------------------------------------------------------------
 # TODO 4: Expose port
 # -----------------------------------------------------------------------------
 # Hint: EXPOSE 8000
-
+EXPOSE 8000
 
 # -----------------------------------------------------------------------------
 # TODO 5: Add health check (BONUS)
@@ -53,7 +61,9 @@ FROM python:3.10-slim
 # Hint:
 # HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
 #   CMD curl -f http://localhost:8000/health || exit 1
-
+#RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+  CMD curl -f http://localhost:8000/health || exit 1
 
 # -----------------------------------------------------------------------------
 # TODO 6: Set the startup command
@@ -63,4 +73,4 @@ FROM python:3.10-slim
 # - Bind to 0.0.0.0:8000
 #
 # Hint: CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
-
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]

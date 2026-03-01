@@ -77,17 +77,14 @@ class TestPredictEndpoint:
     
     def test_predict_valid_input(self):
         """Test prediction with valid input."""
-        # TODO: Implement this test
-        #
-        # response = client.post(
-        #     "/predict",
-        #     json={"user_id": "196", "movie_id": "242"}
-        # )
-        # assert response.status_code == 200
-        # data = response.json()
-        # assert "predicted_rating" in data
-        # assert 1.0 <= data["predicted_rating"] <= 5.0
-        pass
+        response = client.post(
+            "/predict",
+            json={"user_id": "196", "movie_id": "242"}
+        )
+        assert response.status_code == 200
+        data = response.json()
+        assert "predicted_rating" in data
+        assert 1.0 <= data["predicted_rating"] <= 5.0
     
     # -------------------------------------------------------------------------
     # TODO: Implement test_predict_response_format
@@ -98,19 +95,16 @@ class TestPredictEndpoint:
     
     def test_predict_response_format(self):
         """Test that prediction response has correct format."""
-        # TODO: Implement this test
-        #
-        # response = client.post(
-        #     "/predict",
-        #     json={"user_id": "196", "movie_id": "242"}
-        # )
-        # data = response.json()
-        # 
-        # assert "user_id" in data
-        # assert "movie_id" in data
-        # assert "predicted_rating" in data
-        # assert "model_version" in data
-        pass
+        response = client.post(
+            "/predict",
+            json={"user_id": "196", "movie_id": "242"}
+        )
+        data = response.json()
+        
+        assert "user_id" in data
+        assert "movie_id" in data
+        assert "predicted_rating" in data
+        assert "model_version" in data
     
     # -------------------------------------------------------------------------
     # TODO: Implement test_predict_missing_user_id
@@ -121,14 +115,11 @@ class TestPredictEndpoint:
     
     def test_predict_missing_user_id(self):
         """Test prediction with missing user_id."""
-        # TODO: Implement this test
-        #
-        # response = client.post(
-        #     "/predict",
-        #     json={"movie_id": "242"}  # Missing user_id
-        # )
-        # assert response.status_code == 422
-        pass
+        response = client.post(
+            "/predict",
+            json={"movie_id": "242"}
+        )
+        assert response.status_code == 422
     
     # -------------------------------------------------------------------------
     # TODO: Implement test_predict_missing_movie_id
@@ -139,8 +130,11 @@ class TestPredictEndpoint:
     
     def test_predict_missing_movie_id(self):
         """Test prediction with missing movie_id."""
-        # TODO: Implement this test
-        pass
+        response = client.post(
+            "/predict",
+            json={"user_id": "196"}
+        )
+        assert response.status_code == 422
     
     # -------------------------------------------------------------------------
     # TODO: Implement test_predict_empty_body
@@ -151,11 +145,8 @@ class TestPredictEndpoint:
     
     def test_predict_empty_body(self):
         """Test prediction with empty request body."""
-        # TODO: Implement this test
-        #
-        # response = client.post("/predict", json={})
-        # assert response.status_code == 422
-        pass
+        response = client.post("/predict", json={})
+        assert response.status_code == 422
 
 
 # =============================================================================
@@ -166,20 +157,31 @@ class TestEdgeCases:
     
     def test_predict_unknown_user(self):
         """Test prediction with unknown user ID."""
-        # The model should still return a prediction (with default rating)
-        # or handle gracefully
-        # TODO: Implement this test
-        pass
+        response = client.post(
+            "/predict",
+            json={"user_id": "999999", "movie_id": "242"}
+        )
+        assert response.status_code == 200
+        data = response.json()
+        assert "predicted_rating" in data
     
     def test_predict_unknown_movie(self):
         """Test prediction with unknown movie ID."""
-        # TODO: Implement this test
-        pass
+        response = client.post(
+            "/predict",
+            json={"user_id": "196", "movie_id": "999999"}
+        )
+        assert response.status_code == 200
+        data = response.json()
+        assert "predicted_rating" in data
     
     def test_predict_special_characters_in_id(self):
         """Test prediction with special characters in IDs."""
-        # TODO: Implement this test
-        pass
+        response = client.post(
+            "/predict",
+            json={"user_id": "user!@#", "movie_id": "movie$%^"}
+        )
+        assert response.status_code in (200, 500)
 
 
 # =============================================================================
@@ -195,8 +197,9 @@ class TestModelInfoEndpoint:
     
     def test_model_info_contains_version(self):
         """Test that model info contains version."""
-        # TODO: Implement this test
-        pass
+        response = client.get("/model/info")
+        data = response.json()
+        assert "model_version" in data
 
 
 # =============================================================================
@@ -207,13 +210,29 @@ class TestBatchPredictEndpoint:
     
     def test_batch_predict_multiple_items(self):
         """Test batch prediction with multiple items."""
-        # TODO: Implement this test (BONUS)
-        pass
+        response = client.post(
+            "/predict/batch",
+            json={
+                "predictions": [
+                    {"user_id": "196", "movie_id": "242"},
+                    {"user_id": "186", "movie_id": "302"},
+                ]
+            }
+        )
+        assert response.status_code == 200
+        data = response.json()
+        assert "predictions" in data
+        assert data["total_count"] == 2
     
     def test_batch_predict_empty_list(self):
         """Test batch prediction with empty list."""
-        # TODO: Implement this test (BONUS)
-        pass
+        response = client.post(
+            "/predict/batch",
+            json={"predictions": []}
+        )
+        assert response.status_code == 200
+        data = response.json()
+        assert data["total_count"] == 0
 
 
 # =============================================================================
